@@ -17,14 +17,13 @@ import java.util.Set;
 
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.oscm.app.openstack.data.FlowState;
 import org.oscm.app.openstack.exceptions.HeatException;
 import org.oscm.app.v1_0.BSSWebServiceFactory;
 import org.oscm.app.v1_0.data.PasswordAuthentication;
 import org.oscm.app.v1_0.data.ProvisioningSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to handle service parameters and controller configuration
@@ -44,10 +43,14 @@ public class PropertyHandler {
 
     public static final String STACK_NAME = "STACK_NAME";
     public static final String STACK_ID = "STACK_ID";
+    public static final String STACK_NAME_PATTERN = "STACK_NAME_PATTERN";
 
-    // Name (not id) of the tenant/project (if omitted, it is taken from
+    // Name (not id) of the domain (if omitted, it is taken from
     // controller configuration)
-    public static final String TENANT_NAME = "TENANT_NAME";
+    public static final String DOMAIN_NAME = "DOMAIN_NAME";
+
+    // Default name of Domain
+    private static final String DEFAULT_DOMAIN = "default";
 
     // URL of Heat template
     public static final String TEMPLATE_NAME = "TEMPLATE_NAME";
@@ -77,13 +80,22 @@ public class PropertyHandler {
      */
     public static final String STATUS = "STATUS";
 
+    // ID of the tenant/project
+    public static final String TENANT_ID = "TENANT_ID";
+
+    // Timeout for status check (msec)
+    public static final String READY_TIMEOUT = "READY_TIMEOUT";
+
+    // Start time of operation
+    public static final String START_TIME = "START_TIME";
+
     /**
      * Default constructor.
-     * 
+     *
      * @param settings
      *            a <code>ProvisioningSettings</code> object specifying the
      *            service parameters and configuration settings
-     * 
+     *
      */
     public PropertyHandler(ProvisioningSettings settings) {
         this.settings = settings;
@@ -92,7 +104,7 @@ public class PropertyHandler {
     /**
      * Returns the internal state of the current provisioning operation as set
      * by the controller or the dispatcher.
-     * 
+     *
      * @return the current status
      */
     public FlowState getState() {
@@ -102,7 +114,7 @@ public class PropertyHandler {
 
     /**
      * Changes the internal state for the current provisioning operation.
-     * 
+     *
      * @param newState
      *            the new state to set
      */
@@ -113,7 +125,7 @@ public class PropertyHandler {
     /**
      * Returns the current service parameters and controller configuration
      * settings.
-     * 
+     *
      * @return a <code>ProvisioningSettings</code> object specifying the
      *         parameters and settings
      */
@@ -123,7 +135,7 @@ public class PropertyHandler {
 
     /**
      * Returns the name of the stack (=instance identifier).
-     * 
+     *
      * @return the name of the stack
      */
     public String getStackName() {
@@ -135,8 +147,17 @@ public class PropertyHandler {
     }
 
     /**
-     * Returns the heat specific id of the stack.
+     * Returns the regex for the stack name
      * 
+     * @return the regular expression
+     */
+    public String getStackNamePattern() {
+        return settings.getParameters().get(STACK_NAME_PATTERN);
+    }
+
+    /**
+     * Returns the heat specific id of the stack.
+     *
      * @return the id of the stack
      */
     public String getStackId() {
@@ -150,7 +171,7 @@ public class PropertyHandler {
     /**
      * Returns the access information pattern used to created the instance
      * access information using the output parameters of the created stack.
-     * 
+     *
      * @return the access information pattern
      */
     public String getAccessInfoPattern() {
@@ -160,7 +181,7 @@ public class PropertyHandler {
 
     /**
      * Returns the URL of the template to be used for provisioning.
-     * 
+     *
      * @return the template URL
      */
     public String getTemplateUrl() throws HeatException {
@@ -168,29 +189,35 @@ public class PropertyHandler {
         try {
             String url = getValidatedProperty(settings.getParameters(),
                     TEMPLATE_NAME);
-            String baseUrl = getValidatedProperty(settings.getConfigSettings(),
-                    TEMPLATE_BASE_URL);
+
+            String baseUrl = settings.getParameters().get(TEMPLATE_BASE_URL);
+            if (baseUrl == null || baseUrl.trim().length() == 0) {
+                baseUrl = getValidatedProperty(settings.getConfigSettings(),
+                        TEMPLATE_BASE_URL);
+            }
             return new URL(new URL(baseUrl), url).toExternalForm();
         } catch (MalformedURLException e) {
-            throw new HeatException("Cannot generate template URL: "
-                    + e.getMessage());
+            throw new HeatException(
+                    "Cannot generate template URL: " + e.getMessage());
         }
     }
 
     /**
-     * Returns the tenant name that defines the context for the provisioning. It
+     * Returns the domain name that defines the context for the provisioning. It
      * can either be defined within the controller settings of as instance
      * parameter. When present, the service parameter is preferred.
-     * 
-     * @return the tenant name
+     *
+     * @return the domain name
      */
-    public String getTenantName() {
-        String tenant = settings.getParameters().get(TENANT_NAME);
-        if (tenant == null || tenant.trim().length() == 0) {
-            tenant = getValidatedProperty(settings.getConfigSettings(),
-                    TENANT_NAME);
+    public String getDomainName() {
+        String domain = settings.getParameters().get(DOMAIN_NAME);
+        if (domain == null || domain.trim().length() == 0) {
+            domain = settings.getConfigSettings().get(DOMAIN_NAME);
+            if (domain == null || domain.trim().length() == 0) {
+                domain = DEFAULT_DOMAIN;
+            }
         }
-        return tenant;
+        return domain;
     }
 
     public JSONObject getTemplateParameters() {
@@ -205,7 +232,8 @@ public class PropertyHandler {
                 } catch (JSONException e) {
                     // should not happen with Strings
                     throw new RuntimeException(
-                            "JSON error when collection template parameters", e);
+                            "JSON error when collection template parameters",
+                            e);
                 }
             }
         }
@@ -215,7 +243,7 @@ public class PropertyHandler {
     /**
      * Reads the requested property from the available parameters. If no value
      * can be found, a RuntimeException will be thrown.
-     * 
+     *
      * @param sourceProps
      *            The property object to take the settings from
      * @param key
@@ -237,17 +265,22 @@ public class PropertyHandler {
     /**
      * Return the URL of the Keystone API which acts as entry point to all other
      * API endpoints.
-     * 
+     *
      * @return the Keystone URL
      */
     public String getKeystoneUrl() {
-        return getValidatedProperty(settings.getConfigSettings(),
-                KEYSTONE_API_URL);
+
+        String keystoneURL = settings.getParameters().get(KEYSTONE_API_URL);
+        if (keystoneURL == null || keystoneURL.trim().length() == 0) {
+            keystoneURL = getValidatedProperty(settings.getConfigSettings(),
+                    KEYSTONE_API_URL);
+        }
+        return keystoneURL;
     }
 
     /**
      * Returns the configured password for API usage.
-     * 
+     *
      * @return the password
      */
     public String getPassword() {
@@ -256,17 +289,18 @@ public class PropertyHandler {
 
     /**
      * Returns the configured user name for API usage.
-     * 
+     *
      * @return the user name
      */
     public String getUserName() {
-        return getValidatedProperty(settings.getConfigSettings(), API_USER_NAME);
+        return getValidatedProperty(settings.getConfigSettings(),
+                API_USER_NAME);
     }
 
     /**
      * Returns the mail address to be used for completion events (provisioned,
      * deleted). If not set, no events are required.
-     * 
+     *
      * @return the mail address or <code>null</code> if no events are required
      */
     public String getMailForCompletion() {
@@ -287,8 +321,10 @@ public class PropertyHandler {
         details.append(getUserName());
         details.append("\t\r\nKeystoneAPIUrl: ");
         details.append(getKeystoneUrl());
-        details.append("\t\r\nTenantName: ");
-        details.append(getTenantName());
+        details.append("\t\r\nTenantID: ");
+        details.append(getTenantId());
+        details.append("\t\r\nDomainName: ");
+        details.append(getDomainName());
         details.append("\t\r\nTemplateUrl: ");
         details.append(getTemplateUrl());
         details.append("\t\r\nAccessInfoPattern: ");
@@ -312,10 +348,10 @@ public class PropertyHandler {
     public PasswordAuthentication getTPAuthentication() {
         return settings.getAuthentication();
     }
-    
+
     /**
      * Returns the locale set as default for the customer organization.
-     * 
+     *
      * @return the customer locale
      */
     public String getCustomerLocale() {
@@ -325,4 +361,60 @@ public class PropertyHandler {
         }
         return locale;
     }
+
+    /**
+     * Returns the tenant id that defines the context for the provisioning.
+     *
+     * @return the tenant id
+     */
+    public String getTenantId() {
+        String tenant = settings.getParameters().get(TENANT_ID);
+        if (tenant == null || tenant.trim().length() == 0) {
+            tenant = getValidatedProperty(settings.getConfigSettings(),
+                    TENANT_ID);
+        }
+        return tenant;
+    }
+
+    /**
+     * Set start time of operation
+     * 
+     * @param time
+     */
+    public void setStartTime(String time) {
+        settings.getParameters().put(START_TIME, time);
+    }
+
+    /**
+     * Return the start time of operation
+     * 
+     * @return the start time of string
+     */
+    public String getStartTime() {
+        return settings.getParameters().get(START_TIME);
+    }
+
+    /**
+     * Return the ready timeout which is waiting time of status changing If
+     * number is not corrected, return 0
+     * 
+     * @return timeout value of long
+     */
+    public long getReadyTimeout() {
+        String readyTimeout = settings.getConfigSettings().get(READY_TIMEOUT);
+        if (readyTimeout == null || readyTimeout.trim().length() == 0) {
+            LOGGER.warn("'READY_TIMEOUT' is not set and therefore ignored");
+            return 0;
+        }
+        try {
+            return Long
+                    .parseLong(settings.getConfigSettings().get(READY_TIMEOUT));
+        } catch (NumberFormatException ex) {
+            LOGGER.warn(
+                    "Wrong value set for property 'READY_TIMEOUT' and therefore ignored");
+        }
+        return 0;
+
+    }
+
 }
