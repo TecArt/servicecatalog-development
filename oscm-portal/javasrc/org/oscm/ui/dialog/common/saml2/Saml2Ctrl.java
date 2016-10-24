@@ -115,12 +115,12 @@ public class Saml2Ctrl extends BaseBean {
     void storeRequestIdInSession(String requestId) {
         setSessionAttribute(Constants.SESS_ATTR_IDP_REQUEST_ID, requestId);
     }
-    URL getAcsUrl() throws MalformedURLException, NotExistentTenantException, WrongTenantConfigurationException, MarketplaceRemovedException {
+    URL getAcsUrl() throws MalformedURLException, NotExistentTenantException, MarketplaceRemovedException {
         String acsURL = getAuthenticationSettings().getIdentityProviderURL();
         return new URL(acsURL);
     }
 
-    protected AuthenticationSettings getAuthenticationSettings() throws NotExistentTenantException, WrongTenantConfigurationException, MarketplaceRemovedException {
+    protected AuthenticationSettings getAuthenticationSettings() throws NotExistentTenantException, MarketplaceRemovedException {
         if (authenticationSettings == null) {
             authenticationSettings = new AuthenticationSettings(
                     tenantService, getConfigurationService());
@@ -134,12 +134,12 @@ public class Saml2Ctrl extends BaseBean {
     }
 
     AuthnRequestGenerator getAuthnRequestGenerator()
-            throws SAML2AuthnRequestException, NotExistentTenantException, WrongTenantConfigurationException, MarketplaceRemovedException {
+            throws SAML2AuthnRequestException, NotExistentTenantException, MarketplaceRemovedException {
         Boolean isHttps = Boolean.valueOf(getRequest().isSecure());
         return new AuthnRequestGenerator(getIssuer(), isHttps);
     }
 
-    String getIssuer() throws SAML2AuthnRequestException, NotExistentTenantException, WrongTenantConfigurationException, MarketplaceRemovedException {
+    String getIssuer() throws SAML2AuthnRequestException, NotExistentTenantException, MarketplaceRemovedException {
         String issuer = getAuthenticationSettings().getIssuer();
         if (ADMStringUtils.isBlank(issuer)) {
             throw new SAML2AuthnRequestException(
