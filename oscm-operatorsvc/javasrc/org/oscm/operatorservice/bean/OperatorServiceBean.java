@@ -68,6 +68,8 @@ import org.oscm.validation.ArgumentValidator;
 import org.oscm.validator.BLValidator;
 import org.oscm.validator.OrganizationRoleValidator;
 
+import static org.oscm.internal.types.exception.DuplicateTenantIdException.Reason.TENANT_ALREADY_EXISTS;
+
 /**
  * Bean implementation of the operator related functionality.
  * 
@@ -845,7 +847,9 @@ public class OperatorServiceBean implements OperatorService {
     @RolesAllowed("PLATFORM_OPERATOR")
     public void saveConfigurationSetting(VOConfigurationSetting setting)
             throws OrganizationAuthoritiesException, ValidationException,
-            ConcurrentModificationException {
+            ConcurrentModificationException, DuplicateTenantIdException {
+
+        validateDefaultTenantIdUniqueness(setting);
 
         ConfigurationSetting dbSetting = configService.getConfigurationSetting(
                 setting.getInformationId(), setting.getContextId());
@@ -859,6 +863,19 @@ public class OperatorServiceBean implements OperatorService {
 
         configService.setConfigurationSetting(dbSetting);
 
+    }
+
+    private void validateDefaultTenantIdUniqueness(VOConfigurationSetting setting) throws ValidationException, DuplicateTenantIdException {
+        if (setting.getInformationId().equals(ConfigurationKey.SSO_DEFAULT_TENANT_ID)) {
+            final String id = setting.getValue();
+            Query query = dm
+                    .createNamedQuery("Tenant.findByBusinessKey");
+            query.setParameter("tenantId", id);
+            List<Object[]> resultList = query.getResultList();
+            if (!resultList.isEmpty()) {
+                throw new DuplicateTenantIdException("Default tenant ID not unique", TENANT_ALREADY_EXISTS);
+            }
+        }
     }
 
     @Override
@@ -1173,7 +1190,7 @@ public class OperatorServiceBean implements OperatorService {
     @RolesAllowed("PLATFORM_OPERATOR")
     public void saveConfigurationSettings(List<VOConfigurationSetting> settings)
             throws OrganizationAuthoritiesException, ValidationException,
-            ConcurrentModificationException {
+            ConcurrentModificationException, DuplicateTenantIdException {
 
         for (VOConfigurationSetting setting : settings) {
             saveConfigurationSetting(setting);
