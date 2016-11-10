@@ -1090,7 +1090,7 @@ public class UserBean extends BaseBean implements Serializable {
         return authenticationSettings;
     }
 
-    protected AuthenticationHandler getAuthenticationHandler() throws ObjectNotFoundException, NotExistentTenantException, MarketplaceRemovedException {
+    protected AuthenticationHandler getAuthenticationHandler() throws ObjectNotFoundException, NotExistentTenantException, WrongTenantConfigurationException, MarketplaceRemovedException {
         AuthenticationSettings authenticationSettings = getAuthenticationSettings();
         authenticationSettings.init(sessionBean.getTenantID());
         return new AuthenticationHandler(getRequest(), getResponse(),
