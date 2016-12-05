@@ -91,7 +91,7 @@ import org.oscm.domobjects.enums.LocalizedObjectTypes;
 import org.oscm.domobjects.enums.ModificationType;
 import org.oscm.domobjects.enums.OrganizationReferenceType;
 import org.oscm.i18nservice.bean.LocalizerFacade;
-import org.oscm.i18nservice.bean.LocalizerServiceStub;
+import org.oscm.i18nservice.bean.LocalizerServiceStub2;
 import org.oscm.i18nservice.local.LocalizerServiceLocal;
 import org.oscm.identityservice.assembler.UserDataAssembler;
 import org.oscm.identityservice.bean.IdManagementStub;
@@ -104,7 +104,7 @@ import org.oscm.serviceprovisioningservice.assembler.RoleAssembler;
 import org.oscm.serviceprovisioningservice.bean.ServiceProvisioningServiceBean;
 import org.oscm.serviceprovisioningservice.bean.ServiceProvisioningServiceLocalizationBean;
 import org.oscm.serviceprovisioningservice.bean.TagServiceBean;
-import org.oscm.sessionservice.bean.SessionManagementStub;
+import org.oscm.sessionservice.bean.SessionManagementStub2;
 import org.oscm.subscriptionservice.assembler.SubscriptionAssembler;
 import org.oscm.subscriptionservice.dao.SubscriptionHistoryDao;
 import org.oscm.subscriptionservice.dao.UsageLicenseDao;
@@ -271,7 +271,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
         container.enableInterfaceMocking(true);
         container.addBean(new DataServiceBean());
         container.addBean(appMgmtStub = new ApplicationServiceStub());
-        container.addBean(new SessionManagementStub() {
+        container.addBean(new SessionManagementStub2() {
             @Override
             public List<Session> getProductSessionsForSubscriptionTKey(
                     long subscriptionTKey) {
@@ -290,8 +290,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
         container.addBean(new CommunicationServiceStub() {
             @Override
             public void sendMail(PlatformUser recipient, EmailType type,
-                    Object[] params,
-                    org.oscm.domobjects.Marketplace marketplace) {
+                    Object[] params, org.oscm.domobjects.Marketplace marketplace) {
 
                 isCorrectSubscriptionIdForMail = params[0]
                         .equals(SUBSCRIPTION_ID);
@@ -300,7 +299,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                 receivedParams = params;
             }
         });
-        container.addBean(new LocalizerServiceStub() {
+        container.addBean(new LocalizerServiceStub2() {
 
             Map<String, List<VOLocalizedText>> map = new HashMap<String, List<VOLocalizedText>>();
 
@@ -5165,7 +5164,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                     Subscription subscription = getSubscription(id,
                             testOrganizations.get(0).getKey());
                     return SubscriptionAssembler.toVOSubscription(subscription,
-                            new LocalizerFacade(new LocalizerServiceStub(),
+                            new LocalizerFacade(new LocalizerServiceStub2(),
                                     "en"));
                 }
             });
@@ -5374,7 +5373,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                     Subscription subscription = getSubscription(id,
                             testOrganizations.get(0).getKey());
                     return SubscriptionAssembler.toVOSubscription(subscription,
-                            new LocalizerFacade(new LocalizerServiceStub(),
+                            new LocalizerFacade(new LocalizerServiceStub2(),
                                     "en"));
                 }
             });
@@ -5403,7 +5402,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                 Subscription subscription = getSubscription(id,
                         testOrganizations.get(0).getKey());
                 return SubscriptionAssembler.toVOSubscription(subscription,
-                        new LocalizerFacade(new LocalizerServiceStub(), "en"));
+                        new LocalizerFacade(new LocalizerServiceStub2(), "en"));
             }
         });
         // try to set another ID, covering block for testing business key unique
@@ -5442,7 +5441,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
         // try to set another ID, covering block for testing business key unique
@@ -5651,7 +5650,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -5724,7 +5723,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -5794,7 +5793,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -5848,7 +5847,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -5902,7 +5901,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -5948,7 +5947,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -5982,7 +5981,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -6028,7 +6027,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -6084,7 +6083,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
 
@@ -6145,7 +6144,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
         assertEquals(unitBefore.getKey(), subToModify.getUnitKey());
@@ -6236,7 +6235,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         .get(0).setConfigurable(true);
                 return SubscriptionAssembler.toVOSubscriptionDetails(
                         subscription, new LocalizerFacade(
-                                new LocalizerServiceStub(), "en"));
+                                new LocalizerServiceStub2(), "en"));
             }
         });
         assertEquals(unitBefore.getKey(), subToModify.getUnitKey());
@@ -6381,7 +6380,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                 Subscription subscription = getSubscription(subscriptionId,
                         testOrganizations.get(0).getKey());
                 return SubscriptionAssembler.toVOSubscription(subscription,
-                        new LocalizerFacade(new LocalizerServiceStub(), "en"));
+                        new LocalizerFacade(new LocalizerServiceStub2(), "en"));
             }
         });
         return subToModify;
@@ -7737,7 +7736,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                 Subscription subscription = getSubscription(id,
                         testOrganizations.get(0).getKey());
                 return SubscriptionAssembler.toVOSubscription(subscription,
-                        new LocalizerFacade(new LocalizerServiceStub(), "en"));
+                        new LocalizerFacade(new LocalizerServiceStub2(), "en"));
             }
         });
         // get product id, it will be a new product with ID like
@@ -7763,13 +7762,19 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                         product.getKey());
                 List<Parameter> result = currentProduct.getParameterSet()
                         .getParameters();
-                result.size(); // only to avoid lazy initialization problems
+                for (int i = 0; i < result.size(); i++) {
+                    ParameterDefinition paramDef = result.get(i)
+                            .getParameterDefinition();
+                    result.get(i).getParameterDefinition().getValueType();
+                    result.get(i).setParameterDefinition(paramDef);
+                }
+                // result.size(); // only to avoid lazy initialization problems
                 return result;
             }
         });
         final List<VOParameter> modifiedParameters = new ArrayList<VOParameter>();
         // prepare VOParameter list for using as method argument
-        for (Parameter parameter : parameters) {
+        for (final Parameter parameter : parameters) {
             final long parameterDefinitionKey = parameter
                     .getParameterDefinition().getKey();
             // get parameter definition
@@ -7794,7 +7799,6 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
                     // set the same value
                     voParam.setValue(parameter.getValue());
                 } else {
-                    // set different value
                     String value = parameter.getValue();
                     StringBuffer str = new StringBuffer();
                     if (value != null) {
@@ -9632,7 +9636,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
         assertTrue(((String) receivedSendMailPayload.get(0).getMailObjects()
                 .get(0).getParams()[1]).startsWith(BASE_URL_BES_HTTPS));
     }
-    
+
     @Test
     public void testSubscribeToProductWithExternalBilling() throws Throwable {
         assertNotNull(subMgmt);
@@ -9654,7 +9658,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
         });
 
         VOService product = getProductToSubscribe(prod.getKey());
-        
+
         VOUser[] users = new VOUser[2];
         VOUser[] admins = new VOUser[1];
         setUsers(users, admins);
@@ -9665,7 +9669,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
         final VOSubscription newSub = subMgmt.subscribeToService(sub, product,
                 getUsersToAdd(admins, users), null, null,
                 new ArrayList<VOUda>());
-        
+
         Subscription createdSub = runTX(new Callable<Subscription>() {
             @Override
             public Subscription call() throws ObjectNotFoundException {
@@ -9673,7 +9677,7 @@ public class SubscriptionServiceBeanIT extends EJBTestBase {
             }
         });
 
-        assertEquals(true, createdSub.isExternal()); 
+        assertEquals(true, createdSub.isExternal());
     }
 
     @Test

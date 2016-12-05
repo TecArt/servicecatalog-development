@@ -329,6 +329,7 @@ public abstract class BaseBesFilter implements Filter {
                 defaultUrl = MenuBean.LINK_TECHSERVICE_IMPORT;
             } else if (!roles.contains(UserRoleType.MARKETPLACE_OWNER)
                     && !roles.contains(UserRoleType.BROKER_MANAGER)
+                    && !roles.contains(UserRoleType.ORGANIZATION_ADMIN)
                     && !roles.contains(UserRoleType.RESELLER_MANAGER)
                     || (userDetails.getOrganizationRoles().size() == 1 && userDetails
                             .getOrganizationRoles().contains(
@@ -549,12 +550,10 @@ public abstract class BaseBesFilter implements Filter {
     /**
      * redirectToMp Url
      */
-    protected boolean redirectToMpUrl(ServiceAccess serviceAccess,
-            HttpServletRequest httpRequest, HttpServletResponse httpResponse)
+    protected boolean redirectToMpUrl(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
             throws IOException {
         String uri = httpRequest.getRequestURI();
-        ConfigurationService cs = serviceAccess
-                .getService(ConfigurationService.class);
+        ConfigurationService cs = getConfigurationService(httpRequest);
         if (httpRequest.getRequestURL() == null)
             return false;
         String requestUrl = httpRequest.getRequestURL().toString();

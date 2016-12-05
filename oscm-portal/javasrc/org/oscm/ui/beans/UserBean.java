@@ -1078,6 +1078,8 @@ public class UserBean extends BaseBean implements Serializable {
             ui.handleError(null, BaseBean.ERROR_GENERATE_AUTHNREQUEST);
         } catch (WrongTenantConfigurationException | NotExistentTenantException | ObjectNotFoundException | MarketplaceRemovedException e) {
             ui.handleError(null, BaseBean.ERROR_MISSING_TENANTID);
+        } catch (WrongTenantConfigurationException e) {
+            ui.handleError(null, BaseBean.ERROR_TENANT_SETTINGS_MISSING);
         }
         return OUTCOME_MARKETPLACE_ERROR_PAGE;
     }
