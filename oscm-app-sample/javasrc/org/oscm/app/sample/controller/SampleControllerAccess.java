@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                           
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                                                                                 
  *  Creation Date: Jan 25, 2017                                                      
  *                                                                              
@@ -11,12 +11,9 @@ package org.oscm.app.sample.controller;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.ejb.Stateless;
-
 import org.oscm.app.common.i18n.Messages;
 import org.oscm.app.common.intf.ControllerAccess;
 
-@Stateless
 public class SampleControllerAccess implements ControllerAccess {
 
     private static final long serialVersionUID = -4783887274347693642L;
