@@ -293,6 +293,7 @@ public class IdentityServiceBean implements IdentityService,
             reader = new BulkUserImportReader(csvData);
             for (Row row : reader) {
                 VOUserDetails userDetails = row.getUserDetails();
+                userDetails.setTenantId(organization.getTenant().getTenantId());
                 List<UserRoleType> roles = row.getRoles();
                 payload.addUser(userDetails, roles);
             }
@@ -327,6 +328,9 @@ public class IdentityServiceBean implements IdentityService,
             Organization organization = getOrganization(user
                     .getOrganizationId());
             String password = new PasswordGenerator().generatePassword();
+            if (organization != null && organization.getTenant() != null) {
+                user.setTenantId(organization.getTenant().getTenantId());
+            }
             addPlatformUser(user, organization, password,
                     UserAccountStatus.PASSWORD_MUST_BE_CHANGED, true, true,
                     marketplace, true);
@@ -538,7 +542,7 @@ public class IdentityServiceBean implements IdentityService,
                     cm.sendMail(
                             pUser,
                             EmailType.USER_CONFIRM_ACKNOWLEDGE,
-                            new Object[] { cm.getMarketplaceUrl(marketplaceId),
+                            new Object[] { cm.getMarketplaceUrl(marketplaceId, null),
                                     pUser.getUserId(),
                                     String.valueOf(pUser.getKey()) },
                             getMarketplace(marketplaceId));
@@ -1847,6 +1851,9 @@ public class IdentityServiceBean implements IdentityService,
         } else {
             pu.setStatus(lockLevel);
         }
+        if (organization.getTenant() != null) {
+            pu.setTenantId(organization.getTenant().getTenantId());
+        }
         dm.persist(pu);
 
         for (UserRoleType role : userDetails.getUserRoles()) {
@@ -1916,7 +1923,7 @@ public class IdentityServiceBean implements IdentityService,
                                 EmailType.USER_CREATED_WITH_MARKETPLACE_SAML_SP,
                                 new Object[] { pu.getUserId(),
                                         cm.getBaseUrlWithTenant(tenantId),
-                                        cm.getMarketplaceUrl(marketplaceId) },
+                                        cm.getMarketplaceUrl(marketplaceId, tenantId) },
                                 marketplace);
 
                     } else {
@@ -1925,7 +1932,7 @@ public class IdentityServiceBean implements IdentityService,
                                 EmailType.USER_CREATED_WITH_MARKETPLACE,
                                 new Object[] { pu.getUserId(), password,
                                         cm.getBaseUrl(),
-                                        cm.getMarketplaceUrl(marketplaceId),
+                                        cm.getMarketplaceUrl(marketplaceId, tenantId),
                                         String.valueOf(pu.getKey()) },
                                 marketplace);
 
@@ -1952,14 +1959,14 @@ public class IdentityServiceBean implements IdentityService,
                             pu,
                             EmailType.USER_CREATED_SAML_SP,
                             new Object[] { pu.getUserId(),
-                                    cm.getMarketplaceUrl(marketplaceId) },
+                                    cm.getMarketplaceUrl(marketplaceId, tenantId) },
                             marketplace);
                 } else {
                     cm.sendMail(
                             pu,
                             EmailType.USER_CREATED,
                             new Object[] { pu.getUserId(), password,
-                                    cm.getMarketplaceUrl(marketplaceId),
+                                    cm.getMarketplaceUrl(marketplaceId, tenantId),
                                     String.valueOf(pu.getKey()) }, marketplace);
                 }
 
@@ -1971,7 +1978,7 @@ public class IdentityServiceBean implements IdentityService,
                             pu,
                             EmailType.USER_IMPORTED_WITH_MARKETPLACE,
                             new Object[] { pu.getUserId(), "", cm.getBaseUrl(),
-                                    cm.getMarketplaceUrl(marketplaceId),
+                                    cm.getMarketplaceUrl(marketplaceId, tenantId),
                                     String.valueOf(pu.getKey()) }, marketplace);
 
                 } else {
@@ -1985,7 +1992,7 @@ public class IdentityServiceBean implements IdentityService,
                         pu,
                         EmailType.USER_IMPORTED,
                         new Object[] { pu.getUserId(), "",
-                                cm.getMarketplaceUrl(marketplaceId),
+                                cm.getMarketplaceUrl(marketplaceId, tenantId),
                                 String.valueOf(pu.getKey()) }, marketplace);
             }
         }

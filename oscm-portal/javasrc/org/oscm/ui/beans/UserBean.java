@@ -1076,7 +1076,7 @@ public class UserBean extends BaseBean implements Serializable {
                     session);
         } catch (SAML2AuthnRequestException e) {
             ui.handleError(null, BaseBean.ERROR_GENERATE_AUTHNREQUEST);
-        } catch (NotExistentTenantException | ObjectNotFoundException | MarketplaceRemovedException e) {
+        } catch (WrongTenantConfigurationException | NotExistentTenantException | ObjectNotFoundException | MarketplaceRemovedException e) {
             ui.handleError(null, BaseBean.ERROR_MISSING_TENANTID);
         } catch (WrongTenantConfigurationException e) {
             ui.handleError(null, BaseBean.ERROR_TENANT_SETTINGS_MISSING);
