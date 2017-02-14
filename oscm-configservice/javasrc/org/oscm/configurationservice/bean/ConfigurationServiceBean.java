@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright FUJITSU LIMITED 2016 
+ *  Copyright FUJITSU LIMITED 2017
  *******************************************************************************/
 
 package org.oscm.configurationservice.bean;
@@ -236,6 +236,8 @@ public class ConfigurationServiceBean
                     .getType() == ConfigurationKey.TYPE_BOOLEAN
                     || configSetting.getInformationId()
                             .getType() == ConfigurationKey.TYPE_LONG
+                    || configSetting.getInformationId()
+                            .getType() == ConfigurationKey.TYPE_URL
                     || configSetting.getInformationId()
                             .getType() == ConfigurationKey.TYPE_STRING
                     || configSetting.getInformationId()

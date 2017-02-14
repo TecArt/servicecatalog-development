@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2016
+ *  Copyright FUJITSU LIMITED 2017
  *
  *  Creation Date: 30.08.2016
  *
@@ -79,6 +79,9 @@ public class ManageTenantServiceBean implements ManageTenantService {
         throws ObjectNotFoundException, NonUniqueBusinessKeyException {
         VOTenant voTenant = tenantService.getTenantByTenantId(tenantId);
         List<VOTenantSetting> tenantSettings = new ArrayList<>();
+        if (properties == null) {
+            return;
+        }
         for (Object propertyKey : properties.keySet()) {
             String key = (String) propertyKey;
             if (!IdpSettingType.contains(key)) {

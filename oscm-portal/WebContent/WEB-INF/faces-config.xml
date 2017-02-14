@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright FUJITSU LIMITED 2016-->
+<!-- Copyright FUJITSU LIMITED 2017-->
 
 <faces-config
     xmlns="http://java.sun.com/xml/ns/javaee"
@@ -862,6 +862,14 @@
     <navigation-case>
       <from-outcome>success</from-outcome>
       <to-view-id>/operator/manageUsers.xhtml</to-view-id>
+      <redirect />
+    </navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+    <from-view-id>/operator/manageIndexes.xhtml</from-view-id>
+    <navigation-case>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/operator/manageIndexes.xhtml</to-view-id>
       <redirect />
     </navigation-case>
   </navigation-rule>

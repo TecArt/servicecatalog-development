@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2016                                             
+ *  Copyright FUJITSU LIMITED 2017
  *                                                                              
  *  Author: goebel                                                      
  *                                                                              
@@ -1341,5 +1341,12 @@ public class MarketplaceServiceBean implements MarketplaceService {
             throws ObjectNotFoundException {
         VOMarketplace marketplace = getMarketplaceById(marketplaceId);
         return marketplace.getTenantId();
+    }
+
+    @Override
+    public String getMarketplaceIdForKey(Long key)
+            throws ObjectNotFoundException {
+        Marketplace mp = dm.getReference(Marketplace.class, key);
+        return mp.getMarketplaceId();
     }
 }
