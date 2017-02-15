@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.oscm.domobjects.Parameter;
@@ -52,8 +53,8 @@ public class SubscriptionClassBridge implements FieldBridge {
             subId = sub.getSubscriptionId();
         }
 
-        Field field = new Field(NAME_SUBSCRIPTION_ID, subId,
-                options.getStore(), options.getIndex(), options.getTermVector());
+        Field field = new StringField(NAME_SUBSCRIPTION_ID, subId,
+                options.getStore());
         field.setBoost(options.getBoost());
         doc.add(field);
 
@@ -64,8 +65,7 @@ public class SubscriptionClassBridge implements FieldBridge {
             subRef = sub.getPurchaseOrderNumber();
         }
 
-        field = new Field(NAME_REFERENCE, subRef, options.getStore(),
-                options.getIndex(), options.getTermVector());
+        field = new StringField(NAME_REFERENCE, subRef, options.getStore());
         field.setBoost(options.getBoost());
         doc.add(field);
 
@@ -82,14 +82,15 @@ public class SubscriptionClassBridge implements FieldBridge {
         StringBuilder sb = new StringBuilder();
 
         for (Parameter p : params) {
-            if (p.getParameterDefinition().getValueType() == ParameterValueType.STRING) {
+            if (p.getParameterDefinition()
+                    .getValueType() == ParameterValueType.STRING) {
                 sb.append(p.getValue());
                 sb.append(SEPARATOR);
             }
         }
 
-        field = new Field(NAME_PARAMETER_VALUE, sb.toString(),
-                options.getStore(), options.getIndex(), options.getTermVector());
+        field = new StringField(NAME_PARAMETER_VALUE, sb.toString(),
+                options.getStore());
         field.setBoost(options.getBoost());
         doc.add(field);
 
@@ -109,13 +110,15 @@ public class SubscriptionClassBridge implements FieldBridge {
         boolean exists;
         for (UdaDefinition udaDef : udaDefList) {
             if (udaDef.getTargetType() == UdaTargetType.CUSTOMER_SUBSCRIPTION
-                    && udaDef.getConfigurationType() != UdaConfigurationType.SUPPLIER) {
+                    && udaDef
+                            .getConfigurationType() != UdaConfigurationType.SUPPLIER) {
 
                 udaList = udaDef.getUdas();
                 exists = false;
                 for (Uda uda : udaList) {
                     final String udaValue = uda.getUdaValue();
-                    if (uda.getTargetObjectKey() == sub.getKey() && StringUtils.isNotBlank(udaValue)) {
+                    if (uda.getTargetObjectKey() == sub.getKey()
+                            && StringUtils.isNotBlank(udaValue)) {
                         sb.append(uda.getUdaValue());
                         sb.append(SEPARATOR);
 
@@ -132,8 +135,8 @@ public class SubscriptionClassBridge implements FieldBridge {
             }
         }
 
-        field = new Field(NAME_UDA_VALUE, sb.toString(), options.getStore(),
-                options.getIndex(), options.getTermVector());
+        field = new StringField(NAME_UDA_VALUE, sb.toString(),
+                options.getStore());
         field.setBoost(options.getBoost());
         doc.add(field);
     }

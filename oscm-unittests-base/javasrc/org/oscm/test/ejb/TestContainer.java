@@ -6,8 +6,20 @@ package org.oscm.test.ejb;
 
 import static org.mockito.Mockito.mock;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -16,7 +28,6 @@ import javax.ejb.SessionContext;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
@@ -25,7 +36,6 @@ import javax.transaction.Transaction;
 import javax.xml.ws.WebServiceContext;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.oscm.test.cdi.ContextManager;
 import org.oscm.test.cdi.TestEvent;
 
@@ -62,8 +72,8 @@ public class TestContainer {
         resources.put(TimerService.class, timerService);
         resources.put(ConnectionFactory.class, new TestJMSConnectionFactory());
         resources.put(Queue.class, TestJMSQueue.getInstance());
-        resources.put(WebServiceContext.class, new TestWebServiceContext(
-                sessionContext));
+        resources.put(WebServiceContext.class,
+                new TestWebServiceContext(sessionContext));
         contextManager = new ContextManager(this);
         addBean(new TestEvent(contextManager));
     }
@@ -86,9 +96,8 @@ public class TestContainer {
         if (!infaceMockingEnabled) {
             injectDependencies(bean);
         }
-        sessionBeans.put(bean,
-                new DeployedSessionBean(persistence.getTransactionManager(),
-                        sessionContext, bean));
+        sessionBeans.put(bean, new DeployedSessionBean(
+                persistence.getTransactionManager(), sessionContext, bean));
         contextManager.scanMethods(bean);
     }
 
@@ -161,9 +170,8 @@ public class TestContainer {
 
                 if (res == null && resource.name().equalsIgnoreCase("BSSDS")) {
                     if (persistenceContext != null) {
-                        res = persistence
-                                .getDataSourceByName(persistenceContext
-                                        .unitName());
+                        res = persistence.getDataSourceByName(
+                                persistenceContext.unitName());
                     } else {
                         res = persistence
                                 .getDataSourceByName("oscm-domainobjects");
@@ -179,9 +187,9 @@ public class TestContainer {
             if (persistenceContext != null) {
                 Reference ref = Reference.createFor(persistenceContext, f);
                 ref.inject(bean,
-                        createLazyEntityManager(persistence
-                                .getEntityManagerFactory(persistenceContext
-                                        .unitName())));
+                        createLazyEntityManager(
+                                persistence.getEntityManagerFactory(
+                                        persistenceContext.unitName())));
             }
 
             Inject inject = f.getAnnotation(Inject.class);
@@ -203,8 +211,8 @@ public class TestContainer {
     }
 
     public EntityManager getPersistenceUnit(String unitName) throws Exception {
-        return createLazyEntityManager(persistence
-                .getEntityManagerFactory(unitName));
+        return createLazyEntityManager(
+                persistence.getEntityManagerFactory(unitName));
     }
 
     private EntityManager createLazyEntityManager(
@@ -224,8 +232,7 @@ public class TestContainer {
                 EntityManager delegate = delegates.get(tx);
                 if (delegate == null) {
                     delegate = factory.createEntityManager();
-                    SessionFactory sessionFactory = persistence.getSf();
-                    final Session session = sessionFactory.openSession();
+                    final Session session = persistence.getSession();
                     delegates.put(tx, delegate);
                     tx.registerSynchronization(new Synchronization() {
 
@@ -247,8 +254,9 @@ public class TestContainer {
                 }
             }
         };
-        return (EntityManager) Proxy.newProxyInstance(this.getClass()
-                .getClassLoader(), new Class[] { EntityManager.class }, h);
+        return (EntityManager) Proxy.newProxyInstance(
+                this.getClass().getClassLoader(),
+                new Class[] { EntityManager.class }, h);
     }
 
     public TestJMSQueue getJMSQueue() {

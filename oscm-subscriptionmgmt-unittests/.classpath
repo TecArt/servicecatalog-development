@@ -43,8 +43,8 @@
 	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/jandex-2.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/hibernate-commons-annotations-5.0.1.Final.jar"/>
-	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/hibernate-core-5.0.9.Final.jar"/>
-	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/hibernate-entitymanager-5.0.9.Final.jar"/>
+	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/hibernate-core-5.2.6.Final.jar"/>
+	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/hibernate-entitymanager-5.2.6.Final.jar"/>
 	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/javassist-3.20.0-GA.jar"/>
 	<classpathentry kind="lib" path="/libraries/redhat-hibernate/javalib/jboss-transaction-api_1.1_spec-1.0.1.Final.jar"/>
@@ -54,14 +54,14 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/oscm-usergroupmgmt"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/oscm-extsvc-operation"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/oscm-internal-interfaces"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-analyzers-common-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-core-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-facet-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-core-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-solrj-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-queryparser-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/jboss-hibernate-search/javalib/hibernate-search-orm-5.5.4.Final.jar"/>
-	<classpathentry kind="lib" path="/libraries/jboss-hibernate-search/javalib/hibernate-search-engine-5.5.4.Final.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-analyzers-common-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-core-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-facet-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-core-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-solrj-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-queryparser-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/jboss-hibernate-search/javalib/hibernate-search-orm-5.7.0.Beta2.jar"/>
+	<classpathentry kind="lib" path="/libraries/jboss-hibernate-search/javalib/hibernate-search-engine-5.7.0.Beta2.jar"/>
 	<classpathentry kind="lib" path="/libraries/glassfish4/javalib/gf-client.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

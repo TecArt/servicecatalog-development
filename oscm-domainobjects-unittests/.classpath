@@ -7,10 +7,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/oscm-common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/oscm-extsvc-internal"/>
 	<classpathentry kind="lib" path="/libraries/mockito/javalib/mockito-all-1.8.5.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-analyzers-common-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-core-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-core-5.3.1.jar"/>
-	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-solrj-5.3.1.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-analyzers-common-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/lucene-core-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-core-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/libraries/apache-lucene/javalib/solr-solrj-5.5.3.jar"/>
 	<classpathentry kind="lib" path="/libraries/glassfish4/javalib/javaee.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

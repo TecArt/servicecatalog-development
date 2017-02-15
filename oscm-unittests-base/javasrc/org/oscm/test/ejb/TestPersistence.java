@@ -22,9 +22,9 @@ import org.apache.commons.dbcp.managed.ManagedDataSource;
 import org.apache.commons.dbcp.managed.XAConnectionFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.geronimo.transaction.manager.TransactionManagerImpl;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Environment;
-import org.hibernate.jpa.internal.EntityManagerFactoryImpl;
 import org.oscm.test.db.ITestDB;
 
 /**
@@ -49,6 +49,7 @@ public class TestPersistence {
 
     private boolean runOnProductiveDB = false;
     private SessionFactory sf;
+    private Session s;
 
     public TestPersistence() {
         try {
@@ -72,7 +73,6 @@ public class TestPersistence {
         this.runOnProductiveDB = true;
     }
 
-
     public EntityManagerFactory getEntityManagerFactory(String unitName)
             throws Exception {
         final ITestDB testDb = TestDataSources.get(unitName, runOnProductiveDB);
@@ -93,19 +93,22 @@ public class TestPersistence {
             String unitName) throws Exception {
         Map<Object, Object> properties = new HashMap<Object, Object>();
         properties.put(Environment.HBM2DDL_AUTO, "");
-        properties.put(Environment.DATASOURCE, createManagedDataSource(testDb
-                .getDataSource()));
-        properties.put("hibernate.search.autoregister_listeners", System.getProperty("hibernate.search.autoregister_listeners"));
-        properties.put("hibernate.transaction.jta.platform", "org.hibernate.service.jta.platform.internal.SunOneJtaPlatform");
+        properties.put(Environment.DATASOURCE,
+                createManagedDataSource(testDb.getDataSource()));
+        properties.put("hibernate.search.autoregister_listeners",
+                System.getProperty("hibernate.search.autoregister_listeners"));
+        properties.put("hibernate.transaction.jta.platform",
+                "org.hibernate.service.jta.platform.internal.SunOneJtaPlatform");
         properties.put("hibernate.id.new_generator_mappings", "false");
         properties.put("org.hibernate.SQL", "false");
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(unitName, properties);
-        sf = ((EntityManagerFactoryImpl) entityManagerFactory).getSessionFactory();
+        EntityManagerFactory entityManagerFactory = Persistence
+                .createEntityManagerFactory(unitName, properties);
+        s = entityManagerFactory.createEntityManager().unwrap(Session.class);
         return entityManagerFactory;
     }
 
-    public SessionFactory getSf() {
-        return sf;
+    public Session getSession() {
+        return s;
     }
 
     private DataSource createManagedDataSource(DataSource ds) {

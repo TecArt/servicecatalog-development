@@ -27,18 +27,15 @@ import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.apache.solr.parser.QueryParser;
-import org.apache.solr.search.SyntaxError;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
+import org.apache.solr.parser.QueryParser;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-
 import org.oscm.dataservice.bean.IndexMQSender;
 import org.oscm.dataservice.local.DataService;
 import org.oscm.domobjects.Marketplace;
@@ -112,15 +109,15 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
 
     @Override
     public VOServiceListResult searchServices(String marketplaceId,
-            String locale, String searchPhrase) throws InvalidPhraseException,
-            ObjectNotFoundException {
+            String locale, String searchPhrase)
+            throws InvalidPhraseException, ObjectNotFoundException {
         return searchServices(marketplaceId, locale, searchPhrase,
                 PerformanceHint.ALL_FIELDS);
     }
 
     public VOServiceListResult searchServices(String marketplaceId,
             String locale, String searchPhrase, PerformanceHint performanceHint)
-            throws InvalidPhraseException, ObjectNotFoundException {
+            throws ObjectNotFoundException, InvalidPhraseException {
 
         ArgumentValidator.notEmptyString("marketplaceId", marketplaceId);
         ArgumentValidator.notEmptyString("locale", locale);
@@ -141,12 +138,14 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
                 FullTextSession fts = Search.getFullTextSession(session);
 
                 // (1) search in actual locale
-                org.apache.lucene.search.Query query = getLuceneQuery(searchPhrase, marketplaceId, locale, false);
+                org.apache.lucene.search.Query query = getLuceneQuery(
+                        searchPhrase, marketplaceId, locale, false);
                 searchViaLucene(query, fts, map);
 
                 if (!DEFAULT_LOCALE.equals(locale)) {
                     // (2) search in default locale
-                    query = getLuceneQuery(searchPhrase, marketplaceId, locale, true);
+                    query = getLuceneQuery(searchPhrase, marketplaceId, locale,
+                            true);
                     searchViaLucene(query, fts, map);
                 }
 
@@ -172,11 +171,6 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
                     }
                 }
             }
-        } catch (SyntaxError | QueryNodeException e) {
-            InvalidPhraseException ipe = new InvalidPhraseException(e,
-                    searchPhrase);
-            logger.logDebug(ipe.getMessage());
-            throw ipe;
         } finally {
             listResult.setResultSize(voList.size());
             listResult.setServices(voList);
@@ -210,8 +204,7 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
      *             in case the query cannot be parsed
      */
     private org.apache.lucene.search.Query getLuceneQuery(String searchString,
-            String mId, String locale,
-            boolean isDefaultLocaleHandling) throws SyntaxError, QueryNodeException {
+            String mId, String locale, boolean isDefaultLocaleHandling) {
 
         // construct wildcard query for the actual search part
         org.apache.lucene.search.Query textQuery = LuceneQueryBuilder
@@ -223,9 +216,10 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
                 QueryParser.escape(mId).toLowerCase()));
 
         // now construct final query
-        BooleanQuery query = new BooleanQuery();
-        query.add(mIdQuery, Occur.MUST);
-        query.add(textQuery, Occur.MUST);
+        BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
+        BooleanQuery query = finalQueryBuilder.build();
+        finalQueryBuilder.add(mIdQuery, Occur.MUST);
+        finalQueryBuilder.add(textQuery, Occur.MUST);
         return query;
     }
 
@@ -274,11 +268,12 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
         ProductSearch search = new ProductSearch(getDm(), marketplaceId,
                 listCriteria, DEFAULT_LOCALE, locale, invisibleKeys);
 
-        return convertToVoServiceList(search.execute(), locale, performanceHint);
+        return convertToVoServiceList(search.execute(), locale,
+                performanceHint);
     }
 
-    public VOServiceListResult getAccesibleServices(
-            String marketplaceId, String locale, ListCriteria listCriteria,
+    public VOServiceListResult getAccesibleServices(String marketplaceId,
+            String locale, ListCriteria listCriteria,
             PerformanceHint performanceHint) throws ObjectNotFoundException {
         ArgumentValidator.notEmptyString("marketplaceId", marketplaceId);
         ArgumentValidator.notEmptyString("locale", locale);
@@ -298,7 +293,8 @@ public class SearchServiceBean implements SearchService, SearchServiceLocal {
         ProductSearch search = new ProductSearch(getDm(), marketplaceId,
                 listCriteria, DEFAULT_LOCALE, locale, invisibleKeys);
 
-        return convertToVoServiceList(search.execute(), locale, performanceHint);
+        return convertToVoServiceList(search.execute(), locale,
+                performanceHint);
     }
 
     VOServiceListResult convertToVoServiceList(ProductSearchResult services,

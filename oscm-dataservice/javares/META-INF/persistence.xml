@@ -214,7 +214,7 @@
       <property name="hibernate.show_sql" value="false" />
       <property name="hibernate.format_sql" value="true" />
       <property name="hibernate.jdbc.use_streams_for_binary" value="false" />
-      <property name="hibernate.search.lucene_version" value="LUCENE_5_3_1" />
+      <property name="hibernate.search.lucene_version" value="LUCENE_5_5_3" />
       <property name="javax.persistence.sharedCache.mode" value="ALL"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
       <property name="hibernate.id.new_generator_mappings" value="false"/>

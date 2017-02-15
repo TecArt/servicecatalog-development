@@ -11,6 +11,7 @@
  *******************************************************************************/
 
 package org.oscm.serviceprovisioningservice.bean;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +20,6 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
-
 import org.oscm.converter.WhiteSpaceConverter;
 import org.oscm.domobjects.bridge.ProductClassBridge;
 
@@ -68,11 +68,11 @@ public class LuceneQueryBuilder {
             boolean isDefaultLocaleHandling) {
 
         String[] splitStr = searchPhrase.split("\\s+");
-
-        BooleanQuery booleanQuery = new BooleanQuery();
+        BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+        BooleanQuery booleanQuery = queryBuilder.build();
 
         for (String token : splitStr) {
-            booleanQuery.add(
+            queryBuilder.add(
                     prepareWildcardQueryForSingleToken(token, fieldNames,
                             locale, defaultLocale, isDefaultLocaleHandling),
                     Occur.MUST);
@@ -84,8 +84,8 @@ public class LuceneQueryBuilder {
     private static BooleanQuery prepareWildcardQueryForSingleToken(String token,
             List<String> fieldNames, String locale, String defaultLocale,
             boolean isDefaultLocaleHandling) {
-
-        BooleanQuery queryPart = new BooleanQuery();
+        BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+        BooleanQuery queryPart = queryBuilder.build();
 
         for (String fieldName : fieldNames) {
             if (isDefaultLocaleHandling) {
@@ -95,11 +95,11 @@ public class LuceneQueryBuilder {
                 }
                 BooleanQuery localeHandlingQuery = constructDefaultLocaleHandlingQuery(
                         fieldName, locale, defaultLocale, token);
-                queryPart.add(localeHandlingQuery, Occur.SHOULD);
+                queryBuilder.add(localeHandlingQuery, Occur.SHOULD);
             } else {
                 WildcardQuery wildcardQuery = new WildcardQuery(new Term(
                         fieldName + locale, "*" + token.toLowerCase() + "*"));
-                queryPart.add(wildcardQuery, Occur.SHOULD);
+                queryBuilder.add(wildcardQuery, Occur.SHOULD);
             }
 
         }
@@ -109,22 +109,25 @@ public class LuceneQueryBuilder {
     private static BooleanQuery constructDefaultLocaleHandlingQuery(
             String fieldName, String locale, String defaultLocale,
             String searchPhrase) {
-        BooleanQuery bq1 = new BooleanQuery();
+        BooleanQuery.Builder termQueryBuilder = new BooleanQuery.Builder();
+        BooleanQuery bq1 = termQueryBuilder.build();
         TermQuery tq1 = new TermQuery(
                 new Term(fieldName + ProductClassBridge.DEFINED_LOCALES_SUFFIX,
                         defaultLocale));
         TermQuery tq2 = new TermQuery(new Term(
                 fieldName + ProductClassBridge.DEFINED_LOCALES_SUFFIX, locale));
-        bq1.add(tq1, Occur.MUST);
-        bq1.add(tq2, Occur.MUST_NOT);
-        BooleanQuery bq2 = new BooleanQuery();
+        termQueryBuilder.add(tq1, Occur.MUST);
+        termQueryBuilder.add(tq2, Occur.MUST_NOT);
+        BooleanQuery.Builder wildcardQueryBuilder = new BooleanQuery.Builder();
+        BooleanQuery bq2 = wildcardQueryBuilder.build();
         WildcardQuery wq1 = new WildcardQuery(
                 new Term(fieldName + defaultLocale,
                         "*" + searchPhrase.toLowerCase() + "*"));
-        bq2.add(wq1, Occur.SHOULD);
-        BooleanQuery finalQuery = new BooleanQuery();
-        finalQuery.add(bq1, Occur.MUST);
-        finalQuery.add(bq2, Occur.MUST);
+        wildcardQueryBuilder.add(wq1, Occur.SHOULD);
+        BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
+        BooleanQuery finalQuery = finalQueryBuilder.build();
+        finalQueryBuilder.add(bq1, Occur.MUST);
+        finalQueryBuilder.add(bq2, Occur.MUST);
 
         return finalQuery;
     }

@@ -23,7 +23,6 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.hibernate.search.jpa.FullTextEntityManager;
-
 import org.oscm.dataservice.local.DataService;
 import org.oscm.domobjects.Subscription;
 import org.oscm.domobjects.bridge.SubscriptionClassBridge;
@@ -37,7 +36,8 @@ import org.oscm.validation.ArgumentValidator;
  */
 @Stateless
 @Local(SubscriptionSearchService.class)
-public class SubscriptionSearchServiceBean implements SubscriptionSearchService {
+public class SubscriptionSearchServiceBean
+        implements SubscriptionSearchService {
 
     @EJB
     private DataService dm;
@@ -54,8 +54,8 @@ public class SubscriptionSearchServiceBean implements SubscriptionSearchService 
 
         BooleanQuery booleanQuery = constructWildcardQuery(searchPhrase);
 
-        javax.persistence.Query jpaQuery = ftem.createFullTextQuery(
-                booleanQuery, Subscription.class);
+        javax.persistence.Query jpaQuery = ftem
+                .createFullTextQuery(booleanQuery, Subscription.class);
 
         list = jpaQuery.getResultList();
 
@@ -82,7 +82,8 @@ public class SubscriptionSearchServiceBean implements SubscriptionSearchService 
 
         String[] splitStr = searchPhrase.split("\\s+");
 
-        BooleanQuery booleanQuery = new BooleanQuery();
+        BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+        BooleanQuery booleanQuery = queryBuilder.build();
 
         final List<String> fieldNames = Arrays.asList(
                 SubscriptionClassBridge.NAME_SUBSCRIPTION_ID,
@@ -91,7 +92,7 @@ public class SubscriptionSearchServiceBean implements SubscriptionSearchService 
                 SubscriptionClassBridge.NAME_UDA_VALUE);
 
         for (String token : splitStr) {
-            booleanQuery.add(
+            queryBuilder.add(
                     prepareWildcardQueryForSingleToken(token, fieldNames),
                     Occur.MUST);
         }
@@ -99,12 +100,14 @@ public class SubscriptionSearchServiceBean implements SubscriptionSearchService 
         return booleanQuery;
     }
 
-    private BooleanQuery prepareWildcardQueryForSingleToken(String token, List<String> fieldNames) {
-        BooleanQuery queryPart = new BooleanQuery();
+    private BooleanQuery prepareWildcardQueryForSingleToken(String token,
+            List<String> fieldNames) {
+        BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
+        BooleanQuery queryPart = queryBuilder.build();
         for (String fieldName : fieldNames) {
             WildcardQuery wildcardQuery = new WildcardQuery(
                     new Term(fieldName, "*" + token.toLowerCase() + "*"));
-            queryPart.add(wildcardQuery, Occur.SHOULD);
+            queryBuilder.add(wildcardQuery, Occur.SHOULD);
         }
         return queryPart;
     }
