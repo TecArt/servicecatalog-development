@@ -23,6 +23,9 @@
 <c:if test="#{empty bodyClass}">
   <c:set var="bodyClass" value="body4span" />
 </c:if>
+<c:if test="#{empty showBrowseAll or not showBrowseAll}">
+  <c:set var="bodyClass" value="body4span" />
+</c:if>
 
 <h:body class="#{bodyClass}">
   <rich:jQuery selector="document" query="ready(function(){AdmUtils.initFocus();AdmUtils.setUIElements()});" />
