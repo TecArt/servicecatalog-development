@@ -8,7 +8,9 @@
     <!-- Note: showBrowseAll} requires a form with the predefined fields 'tagFilterValue' and 'applyTagFilter' on the current HTML page -->
     <c:set var="showBrowseAll" value="false" />
   </c:if>
-  
+  <c:if test="#{showBrowseAll}">
+    <c:set var="bodyClass" value="body4span" />
+  </c:if>
   <a4j:outputPanel layout="block" styleClass="scrolltop">
     <p>
       <h:outputLink id="linkBrowseAll" value="#" rendered="#{showBrowseAll}"
