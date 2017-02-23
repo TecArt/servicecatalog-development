@@ -2,7 +2,7 @@
 <!-- Copyright FUJITSU LIMITED 2016-->
  
 <webservices xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  version="1.2" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://www.ibm.com/webservices/xsd/javaee_web_services_1_2.xsd">
+  version="1.4" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://www.ibm.com/webservices/xsd/javaee_web_services_1_4.xsd">
   <webservice-description>
     <display-name>ProvisioningService</display-name>
     <webservice-description-name>ProvisioningService</webservice-description-name>
