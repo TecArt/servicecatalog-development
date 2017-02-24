@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright FUJITSU LIMITED 2016-->
- 
-<webservices xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  version="1.4" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://www.ibm.com/webservices/xsd/javaee_web_services_1_4.xsd">
+
+<webservices xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_1_4.xsd"
+             version="1.4">
   <webservice-description>
     <display-name>ProvisioningService</display-name>
     <webservice-description-name>ProvisioningService</webservice-description-name>
