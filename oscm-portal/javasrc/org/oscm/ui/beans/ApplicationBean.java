@@ -13,14 +13,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -30,18 +23,8 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.oscm.logging.Log4jLogger;
-import org.oscm.logging.LoggerFactory;
 import org.oscm.converter.DateConverter;
 import org.oscm.converter.PropertiesLoader;
-import org.oscm.types.constants.Configuration;
-import org.oscm.types.enumtypes.LogMessageIdentifier;
-import org.oscm.ui.common.Constants;
-import org.oscm.ui.common.JSFUtils;
-import org.oscm.ui.common.LocaleUtils;
-import org.oscm.ui.common.ServiceAccess;
-import org.oscm.ui.common.UiDelegate;
-import org.oscm.validator.ADMValidator;
 import org.oscm.internal.intf.ConfigurationService;
 import org.oscm.internal.intf.IdentityService;
 import org.oscm.internal.operatorservice.ManageLanguageService;
@@ -53,6 +36,12 @@ import org.oscm.internal.types.exception.ObjectNotFoundException;
 import org.oscm.internal.types.exception.SaaSSystemException;
 import org.oscm.internal.vo.VOConfigurationSetting;
 import org.oscm.internal.vo.VOUserDetails;
+import org.oscm.logging.Log4jLogger;
+import org.oscm.logging.LoggerFactory;
+import org.oscm.types.constants.Configuration;
+import org.oscm.types.enumtypes.LogMessageIdentifier;
+import org.oscm.ui.common.*;
+import org.oscm.validator.ADMValidator;
 
 /**
  * Managed bean which provides some field settings to the view elements
@@ -159,7 +148,7 @@ public class ApplicationBean implements Serializable {
                     .format(inFormat.parse(str.substring(sep + 1)));
         } catch (ParseException e) {
             logger.logError(Log4jLogger.SYSTEM_LOG, e,
-                    LogMessageIdentifier.ERROR_FORMATTING_BUILD_DATE);
+                    LogMessageIdentifier.ERROR_FORMATTING_BUILD_DATE, str);
         }
 
     }
