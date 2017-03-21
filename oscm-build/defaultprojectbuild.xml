@@ -258,7 +258,8 @@
 
   <target name="unittestsWithoutCoverage" if="rununittests" depends="_init, package">
     <mkdir dir="${result.work.testreport.dir}" />
-      <junit fork="yes" forkmode="once" dir="${project.dir}" failureproperty="unittests.failure" maxmemory="1024m" timeout="120000">
+    <junit fork="yes" forkmode="perTest" dir="${project.dir}" failureproperty="unittests.failure" maxmemory="1024m"
+           threads="3" printsummary="true" logfailedtests="yes" timeout="120000">
       <jvmarg value="-Dfile.encoding=UTF8" />
       <!-- Run unit tests without Hibernate Search indexing -->
       <jvmarg value="-Dhibernate.search.autoregister_listeners=false" />
